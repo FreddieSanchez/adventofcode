@@ -1,47 +1,23 @@
 #!/usr/bin/python
 
-import sys, re;
+import sys, re, itertools;
 
 # City -> [(City,distance)]
 distances = {}
 
-def path(starting,comp):
+def path_distance(path_list):
 
-    previous = None;
-    current = starting;
-    currentDistance = 0;
+    previous = None
+    current = None
+    currentDistance = 0
 
-    unvisited = [city for city in distances ]
-
-    cur_path = [];
-    
-    # while 
-    while len(unvisited):
-
-        unvisited.remove(current);
-
-        cur_path.append(current);
-                
+    for city in path_list:
+        current = city
         if (previous):
             currentDistance += distances[previous][current]
+        previous = current
+    return currentDistance
         
-        # get all neighbors
-        neighbors = distances[current];
-
-        # filter out all neighbors that we have already visited
-        neighbors = [neighbor for neighbor in neighbors if neighbor in unvisited]
-        print [(x,distances[current][x]) for x in neighbors]
-
-        previous = current;
-        if (len(neighbors)):
-            current = comp(neighbors,key=lambda x: distances[previous][x])
-
-
-    return {'path': cur_path,
-            'distance':currentDistance};
-
-            
-
 
 input = re.compile(r'(\w+) to (\w+) = (\d+)');
 for x in sys.stdin:
@@ -56,8 +32,6 @@ for x in sys.stdin:
     distances[fro][to] = distance
     distances[to][fro] = distance
 
-paths = [path(city,min) for city in distances]
-print min(paths, key=lambda x: x['distance'])
-
-paths = [path(city,max) for city in distances]
-print max(paths, key=lambda x: x['distance'])
+paths = [path for path in itertools.permutations([city for city in distances])]
+print min([path_distance(x) for x in paths])
+print max([path_distance(x) for x in paths])
