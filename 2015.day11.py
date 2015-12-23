@@ -64,9 +64,9 @@ def solve(s):
     init = s;
     s = increment_string(s)
     print meets_requirements(s)
-    while not meets_requirements(s) and s != init:
-     print s
-     s = increment_string(s)
+    #while not meets_requirements(s) and s != init:
+    # print s
+    # s = increment_string(s)
     print s
     return s
 
