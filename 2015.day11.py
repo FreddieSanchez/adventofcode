@@ -7,8 +7,6 @@ z = ord('z')
 def increment(n):
     if (n + 1) > z:
         return a
-    elif((n+1) in [ord('i'),ord('o'),ord('l')]):
-        return n + 2
     else: 
         return n + 1
 
