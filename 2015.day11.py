@@ -2,15 +2,17 @@
 
 import sys, re, time
 
-def increment_string(s):
-    a = ord('a')
-    z = ord('z')
+a = ord('a')
+z = ord('z')
+def increment(n):
+    if (n + 1) > z:
+        return a
+    elif((n+1) in [ord('i'),ord('o'),ord('l')]):
+        return n + 2
+    else: 
+        return n + 1
 
-    def increment(n):
-        if (n + 1) > z:
-            return a
-        else:
-            return n + 1
+def increment_string(s):
 
     num = [ ord(c) for c in s];
     
@@ -44,7 +46,7 @@ def meets_requirements(s):
         count = 0
         
         for c in s[1:]:
-            if (ord(c) == (ord(prev) + 1)):
+            if (ord(c) == increment(ord(prev))):
                 if (incr):
                     count += 1
                 else:
@@ -63,8 +65,9 @@ def meets_requirements(s):
 def solve(s):
     init = s;
     s = increment_string(s)
-    meets_requirements(s)
+    print meets_requirements(s)
     while not meets_requirements(s) and s != init:
+     print s
      s = increment_string(s)
     print s
     return s
