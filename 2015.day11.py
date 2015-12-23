@@ -56,6 +56,9 @@ def meets_requirements(s):
             prev = c
         return incr and count >=3
 
+    print two_pairs.match(s)
+    print not iol.match(s)
+    print incrementing(s)
     return two_pairs.match(s) and \
            not iol.match(s) and \
            incrementing(s)
