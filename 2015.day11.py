@@ -44,21 +44,15 @@ def meets_requirements(s):
         count = 0
         
         for c in s[1:]:
-            if (ord(c) == increment(ord(prev))):
-                if (incr):
-                    count += 1
-                else:
+            if (ord(c) == ord(prev) + 1):
+                count += 1
+                if (not incr):
                     incr= True;
-                    count = 1;
             elif (count < 3):
-                count = 0;
+                count = 1;
                 incr= False
             prev = c
         return incr and count >=3
-
-    print two_pairs.match(s)
-    print not iol.match(s)
-    print incrementing(s)
     return two_pairs.match(s) and \
            not iol.match(s) and \
            incrementing(s)
@@ -66,11 +60,12 @@ def meets_requirements(s):
 def solve(s):
     init = s;
     s = increment_string(s)
-    print meets_requirements(s)
-    #while not meets_requirements(s) and s != init:
-    # print s
-    # s = increment_string(s)
-    print s
+    while not meets_requirements(s) and s != init:
+     s = increment_string(s)
     return s
 
-print [solve(input.rstrip()) for input in sys.stdin ]
+
+part1 = [solve(input.rstrip()) for input in sys.stdin ]
+print part1
+part2 = [solve(x) for x in part1];
+print part2
