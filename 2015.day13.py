@@ -37,4 +37,10 @@ for i in input:
 
 
 print solve(people)
+me = 'Freddie'
+people[me] = {}
+for name in people.iterkeys():
+    people[name][me] = 0
+    people[me][name] = 0
+print solve(people)
 
