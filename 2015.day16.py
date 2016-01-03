@@ -39,3 +39,19 @@ for i,sue in enumerate(sues):
 
 
 print possible
+possible = []
+for i,sue in enumerate(sues):
+    valid = True
+    for k,v in sue.iteritems():
+        if k in ['cats','trees']:
+            if v <= analysis[k]:
+              valid = False
+        if k in ['pomeranians','goldfish']:
+            if v >= analysis[k]:
+              valid = False
+        if k not in ['cats','trees','pomeranians','goldfish'] and analysis[k] != v:
+              valid = False
+    if valid:
+        possible.append((i+1,sue))
+
+print possible
