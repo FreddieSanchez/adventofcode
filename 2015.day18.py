@@ -27,10 +27,8 @@ def step(board):
     return board
 
 board = [list(input.rstrip()) for input in sys.stdin ]
-pprint.pprint(board)
-for x in xrange(4):
+for x in xrange(100):
     board = step(board)
-    pprint.pprint(board)
 
 print sum([x.count(on) for x in board])
 
