@@ -19,17 +19,32 @@ def toggle_light(ref_board, board,point):
     if ref_board[x][y] == off:
         board[x][y] = on if lights.count(on) in [3] else off
 
-def step(board):
-    reference_board = copy.deepcopy(board) 
-    for x,x1 in enumerate(board):
+def step(b):
+    reference_board = copy.deepcopy(b) 
+    for x,x1 in enumerate(b):
         for y,y1 in enumerate(x1):
-            toggle_light(reference_board,board,(x,y))
-    return board
+            toggle_light(reference_board,b,(x,y))
+    return b
 
 board = [list(input.rstrip()) for input in sys.stdin ]
+original = copy.deepcopy(board);
 for x in xrange(100):
     board = step(board)
 
 print sum([x.count(on) for x in board])
 
+board = original
+board[0][0] = on
+board[0][len(board[0])-1] = on
+board[len(board)-1][0] = on
+board[len(board)-1][len(board[0])-1] = on
+
+for x in xrange(100):
+    board = step(board)
+    board[0][0] = on
+    board[0][len(board[0])-1] = on
+    board[len(board)-1][0] = on
+    board[len(board)-1][len(board[0])-1] = on
+
+print sum([x.count(on) for x in board])
 
