@@ -6,4 +6,7 @@ powerset = list(it.chain.from_iterable(it.combinations(containers, r) for r in r
 filtered = filter(lambda s: sum(s) == 150, powerset)
 print len(filtered)
 
+minimum = min(map(lambda s: len(s), filtered))
+print len(filter(lambda s: len(s) == minimum, filtered))
+
 
