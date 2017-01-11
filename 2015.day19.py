@@ -1,4 +1,4 @@
-import sys,re,itertools
+import sys,re,itertools,pprint
 
 
 def read():
@@ -25,14 +25,34 @@ def read():
     return (subs,molecule)
 
 subs, molecule = read()
-
 combos = []
 for k,val in subs.iteritems(): 
     for v in val:
-        i = 0
-        while k in molecule[i+len(k):]:
-            found = molecule[:i] + re.sub(k,v,molecule[i:],count=1) 
-            combos.append(found)
-            i = molecule[i:].index(k) + len(k)
+        for m in re.finditer(k,molecule):
+           combos.append(molecule[:m.start()]+v+molecule[m.end():])
+        
 
 print len(set(combos))
+
+def replace(current,subs,steps,times):
+    if (molecule == current):
+        print steps
+        times.append(steps)
+        return
+
+    for k,val in subs.iteritems(): 
+            for v in val:
+                for m in re.finditer(k,current):
+                   new = dict(subs)
+                   new.pop(k)
+                   pprint.pprint(current)
+                   pprint.pprint(new)
+                   replace(current[:m.start()]+v+current[m.end():],\
+                           new,steps+1,times)
+                
+
+
+times = []
+replace('e',subs,0,times)
+print(min(times))
+
