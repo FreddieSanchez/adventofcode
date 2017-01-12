@@ -31,41 +31,65 @@ def degreesToCompass(direction):
         return "West"
 
 def advance(location, direction, distance):
+     
+    x,y = location
     if direction == 0: # North
-        location['y'] += distance;
+        newLocation = (x, y + distance);
     elif direction == 90: # East
-        location['x'] += distance;
+        newLocation = (x + distance, y);
     elif direction == 180: # South
-        location['y'] -= distance;
+        newLocation = (x, y - distance);
     elif direction == 270: # West
-        location['x'] -= distance;
+        newLocation = (x - distance, y);
 
-    print 'advance', distance, direction, degreesToCompass(direction), location;
-    return location;
+    #print 'advance', distance, direction, degreesToCompass(direction), newLocation;
+    return newLocation;
+
+
+# returns all points between start and end;
+def points(start, end):
+  x1, y1 = start;
+  x2, y2 = end;
+  if (x1 == x2):
+    return [(x1,y) for y in xrange(min(y1,y2),max(y1,y2) + (-1 if (max(y1,y2) < 0) else 1))];
+  else:
+    return [(x,y1) for x in xrange(min(x1,x2),max(x1,x2) + (-1 if (max(x1,x2) < 0) else 1))]
+
+  
+  
 
 def calculateDiffDistance(oldLocation, newLocation):
-    return abs(oldLocation['x'] - newLocation['x']) + abs(oldLocation['y'] - newLocation['y'])
+    return abs(oldLocation[0] - newLocation[0]) + abs(oldLocation[1] - newLocation[1])
  
 # Read Input
 input = "".join(sys.stdin)
 input = input.rstrip();
 input = input.split(", ")
-print len(input);
+#print len(input);
 
-originalLocation = {'x':0, 'y':0};
-currentLocation = {'x':0, 'y':0};
+originalLocation = (0,0)
+currentLocation = (0,0);
 currentDirection = 0 # 0 -> North, 90 -> East, 180 -> South, 270 -> West
 
-visitedLocation = [];
-visitedLocation.append(currentLocation.copy());
+visitedLocations= set();
+solutionFound = False;
 for x in input:
    degrees =  90 if x[0] == 'R' else -90;
-   print x, degrees
+#   print x, degrees
    currentDirection = changeDirection(currentDirection, degrees);
+   previousLocation = currentLocation;
    currentLocation = advance(currentLocation, currentDirection, int(x[1:]));
-   visitedLocation.append(currentLocation.copy());
+   visitedPoints = points(previousLocation, currentLocation);
 
-print originalLocation;
-print currentLocation;
-print calculateDiffDistance(originalLocation, currentLocation);
+   for point in visitedPoints:
+     if point in visitedLocations and point != previousLocation and not solutionFound:
+      solution = point;
+      solutionFound = True;
+       
+     visitedLocations.add(point);
+  
+if solutionFound:
+
+  print solution,calculateDiffDistance(originalLocation,solution);
+
 
