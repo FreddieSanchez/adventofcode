@@ -27,6 +27,17 @@ move positions command  =
 navigate :: Position -> Commands -> Positions
 navigate position commands = concat $ scanl move [position] commands
 
+positionDifference :: Position -> Position -> Int
+positionDifference p1 p2 =  (absDiff (x p1) (x p2)) + (absDiff (y p1) (y p2)) where absDiff a b = abs (a - b)
+
+solution1 :: Commands -> Int
+solution1 commands = 
+  let initialPosition =(Position {x=0,y=0,d=N}) 
+  in 
+     let path = navigate initialPosition commands
+     in 
+     positionDifference (last path) initialPosition
+
 parser :: String -> Commands
 parser contents = do
     [case direction of
@@ -38,6 +49,6 @@ parser contents = do
 
 main = do
   contents <- getContents 
-  print $ navigate (Position {x=0,y=0,d=N}) ( parser contents)
+  print $ solution1 $ parser contents
 
 
