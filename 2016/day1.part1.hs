@@ -5,14 +5,14 @@ data Position = Position { x:: Int, y::Int, d::CardinalDirection } deriving(Show
 type Commands = [Command]
 type Positions = [Position]
 
-commandDistance :: Command => Int
+commandDistance :: Command -> Int
 commandDistance (R d) = d
 commandDistance (L d) = d
 
-face :: CardinalDirection -> Command => CardinalDirection
+face :: CardinalDirection -> Command -> CardinalDirection
 face compass direction = toEnum ( mod ( ( fromEnum compass) + (case direction of R _ -> 1; L _ -> ( -1 ) ) ) 4 )
 
-move :: Positions-> Command => Positions
+move :: Positions -> Command -> Positions
 move positions command  = 
   let currentPosition = last positions
   in 
@@ -24,20 +24,20 @@ move positions command  =
        where 
        distance = commandDistance command
         
+navigate :: Position -> Commands -> Positions
+navigate position commands = concat $ scanl move [position] commands
 
-
-solution :: Position -> Commands  => Positions
-solution position commands = scanl move [(position:[])] commands
-
-parser :: String => Commands
+parser :: String -> Commands
 parser contents = do
     [case direction of
-      'R':distance -> R (read distance :: Int)
-      'L':distance -> L (read distance :: Int)
+      'R':distance -> R (parse distance)
+      'L':distance -> L (parse distance)
      | direction <- words (filter (/=',') contents)]
+     where 
+     parse x = read x :: Int
 
 main = do
   contents <- getContents 
-  print (solution (Position {x=0,y=0,d=N}) ( parser contents))
+  print $ navigate (Position {x=0,y=0,d=N}) ( parser contents)
 
 
