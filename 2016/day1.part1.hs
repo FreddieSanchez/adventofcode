@@ -1,6 +1,9 @@
 data Command = R Int | L Int deriving(Show)
-data CardinalDirection = N | E | S | W deriving(Show, Enum, Bounded)
+data CardinalDirection = N | E | S | W deriving(Show, Enum, Eq, Ord)
 data Position = Position { x:: Int, y::Int, d::CardinalDirection } deriving(Show)
+
+instance Eq Position where
+  (==) p1 p2 = (x p1) == (x p2) && (y p1) == (y p2) 
 
 type Commands = [Command]
 type Positions = [Position]
@@ -31,12 +34,24 @@ positionDifference :: Position -> Position -> Int
 positionDifference p1 p2 =  (absDiff (x p1) (x p2)) + (absDiff (y p1) (y p2)) where absDiff a b = abs (a - b)
 
 solution1 :: Commands -> Int
-solution1 commands = 
+solution1 commands =  do
+  let initialPosition =(Position {x=0,y=0,d=N}) 
+  let path = navigate initialPosition commands
+  positionDifference (last path) initialPosition
+
+
+repeats :: Positions -> Positions
+repeats [] = []
+repeats (p:ps) = if p `elem` ps then p:(repeats ps) else (repeats ps)
+
+solution2 :: Commands -> Int
+solution2 commands = 
   let initialPosition =(Position {x=0,y=0,d=N}) 
   in 
      let path = navigate initialPosition commands
      in 
-     positionDifference (last path) initialPosition
+     positionDifference (head (repeats path)) initialPosition
+      
 
 parser :: String -> Commands
 parser contents = do
@@ -50,5 +65,6 @@ parser contents = do
 main = do
   contents <- getContents 
   print $ solution1 $ parser contents
+  print $ solution2 $ parser contents
 
 
