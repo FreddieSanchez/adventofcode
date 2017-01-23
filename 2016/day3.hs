@@ -11,7 +11,7 @@ parser2 (x:y:z:xs) = (toList (zip3 x y z)) ++ parser2 xs
         toList l = [[x,y,z] | (x,y,z) <- l]
 
 solution1:: [[Integer]] -> [[Integer]]
-solution1 contents = filter isTriangle contents
+solution1 contents = filter isTriangle
 
 isTriangle :: [Integer] -> Bool
 isTriangle sides = let sorted = sort sides in 
