@@ -1,9 +1,8 @@
-import Data.List.Split (splitWhen, divvy)
+import Data.List.Split (split, startsWithOneOf, divvy)
 import Data.Maybe (mapMaybe)
 
-data IP7 = IP7 { left :: String,
-                 middle :: String,
-                 right :: String
+data IP7 = IP7 { inside:: [String],
+                 outside:: [String]
                }  deriving (Show)
 
 
@@ -17,18 +16,24 @@ isABBA str
 containsABBA str = 
   any isABBA (divvy 4 1 str)
 
-ipContainsABBA ip = (not ( containsABBA (middle ip) )) && (containsABBA (left ip) || containsABBA (right ip))
+ipContainsABBA ip = not ( containsABBA (inside ip) ) && containsABBA (outside ip)
 
 makeIP ip = 
-  case splitWhen (\s -> s == '[' || 
-                       s == ']') ip of 
-    left:middle:right:_ -> 
-        Just IP7 { left = left, middle = middle, right  = right};
-     _ -> Nothing;
+  foldl buildUp IP7 { inside = [], outside = [] } $ split (startsWithOneOf "[]") ip
+  where 
+    buildUp ip chunk = 
+     case head chunk of
+       '[' -> ip {inside = inside ip ++ tail chunk} 
+       ']' -> ip {outside = outside ip ++ tail chunk }
+       _   -> ip {outside = outside ip ++ chunk } 
+      
 
-solution1 ips =  filter ipContainsABBA $ mapMaybe makeIP ips
+
+
+solution1 ips =  filter ipContainsABBA $ map makeIP ips
 
 main = do
   contents <- getContents 
   let parsed = lines contents;
-  print $ solution1 parsed 
+  print $ map makeIP parsed
+  --print $ solution1 parsed 
