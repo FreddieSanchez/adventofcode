@@ -5,10 +5,6 @@ object Day3 {
 
   def distance(x:Int, y:Int): Int = Math.abs(x) + Math.abs(y)
   
-  def part1BruteForce(num:Int):Integer = {
-    ???
-  }
-
   def part1(num:Int):Integer = {
     val distanceFromCenter = (Math.sqrt(num).ceil / 2 ).toInt
 
@@ -33,8 +29,71 @@ object Day3 {
     distance(distanceFromCenter,y)
   }
 
-  def part2(nums:List[List[Int]]): Int = {
-    ???
+  def part2(num:Int): Int = {
+    case class Point(x:Int, y:Int)
+
+    object Direction extends Enumeration {
+      type Direction = Value
+      val Up, Down, Left, Right = Value
+    }
+    def sumNeighbors(p:Point, grid:Map[Point,Int]):Int = {
+      val neighbors = List(
+         Point(p.x + 1, p.y), // right
+         Point(p.x - 1, p.y), // left
+         Point(p.x, p.y + 1), // up 
+         Point(p.x, p.y - 1), // down 
+         Point(p.x + 1, p.y + 1), // upper-left
+         Point(p.x - 1, p.y + 1), // upper-right
+         Point(p.x + 1, p.y - 1), // lower-left
+         Point(p.x - 1, p.y - 1) // lower-right
+       )
+      val gridNeighbors = grid.filterKeys( key => neighbors.contains(key))
+      gridNeighbors.values.foldLeft(0)( (accum, value) => accum + value)
+      
+    }
+    import Direction._
+    def move(p:Point, direction:Direction):Point = {
+      direction match {
+        case Up => Point(p.x, p.y + 1)
+        case Down => Point(p.x, p.y -1)
+        case Left => Point(p.x - 1, p.y)
+        case Right => Point(p.x + 1, p.y)
+      }
+    }
+
+
+    /* 
+     * Finds a new direction given the current direction, and if it can turn in the new driection
+     */
+    def turnOrStraight(p:Point, direction:Direction, grid:Map[Point,Int]):Direction = {
+
+      def canTurn(newDirection:Direction): Boolean = !grid.contains(move(p,newDirection))
+
+      direction match {
+        case Up =>   if (canTurn(Left)) Left else Up
+        case Down => if (canTurn(Right)) Right else Down
+        case Left => if (canTurn(Down)) Down else Left 
+        case Right =>if (canTurn(Up)) Up else Right
+      }
+
+    }
+    
+    @annotation.tailrec
+    def findNum(number:Int, point:Point, direction:Direction, grid:Map[Point,Int]):Int = {
+
+      val newPoint = move(point, direction) 
+      val value = sumNeighbors(newPoint, grid)
+      val newGrid = grid + (newPoint -> value)
+
+
+      val newDirection = turnOrStraight(newPoint, direction, grid)
+      if (number > value) findNum(number, newPoint, newDirection, newGrid)
+      else value
+    }
+
+    val Grid = Map( Point(0,0) -> 1, Point(1,0) -> 1)
+    findNum(num, Point(1,0), Up,  Grid)
+    
   }
 
   def parseInput(lines: List[String]): Int =  lines.map(_.toInt).head
@@ -43,7 +102,6 @@ object Day3 {
     val lines = Source.fromFile("./src/main/scala/3.input").getLines.toList
     val parsed = parseInput(lines)
     println("Part One: " + part1(parsed))
-    //println("Part Two: " + part2(parsed))
-  }
+    println("Part Two: " + part2(parsed)) }
   
 }
