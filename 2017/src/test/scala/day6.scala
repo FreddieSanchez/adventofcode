@@ -16,6 +16,11 @@ class Day6 extends FunSuite {
     val times = solvePart1(Vector(0,2,7,0))
     assert(5 == times)
   }
+  test("solve test 2") {
+
+    val times = solvePart2(Vector(0,2,7,0))
+    assert(4 == times)
+  }
 }
 
 

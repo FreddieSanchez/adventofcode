@@ -35,12 +35,24 @@ object Day6 {
     }
     _solvePart1(banks, Set(), 0)
   }
+
+  def solvePart2(banks:Vector[Int]):Int = {
+    @annotation.tailrec
+    def _solvePart2(banks:Vector[Int], prevBanks:Map[Vector[Int],Int], times:Int):Int = {
+      if (prevBanks.keySet.contains(banks)) times - prevBanks(banks)
+      else {
+        val redistributed = redistribute(banks,largestBank(banks))
+        _solvePart2(redistributed, prevBanks + (banks -> times), times + 1)
+      }
+    }
+    _solvePart2(banks, Map(), 0)
+  }
   def part1(banks:Vector[Int]):Int = {
     solvePart1(banks)
   }
 
-  def part2(instructions:Vector[Int]):Int = {
-    ???
+  def part2(banks:Vector[Int]):Int = {
+    solvePart2(banks)
   }
 
 
