@@ -31,13 +31,23 @@ class Day7 extends FunSuite {
       case None => false})
   }
 
-  test("total weights") {
+  test("calc weights") {
     val p = programs.find(p => p.name == "ugml").get
-    assert(calcChildrenWeights(p) == 183)
+    println(p)
+    assert(calcWeights(p) == 251)
   }
-  test("total weights 1") {
+  test("calc weights 1") {
     val p = programs.find(p => p.name == "padx").get
-    assert(calcChildrenWeights(p) == 198)
+    assert(calcWeights(p) == 243)
+  }
+
+  test("calc weights 2") {
+    val p = programs.find(p => p.name == "fwft").get
+    assert(calcWeights(p) == 243)
+  }
+  test("calc weights 3") {
+    val p = programs.find(p => p.name == "tknk").get
+    assert(calcWeights(p) == 41 + (251 + 243 + 243))
   }
 
   test("weights 1") {

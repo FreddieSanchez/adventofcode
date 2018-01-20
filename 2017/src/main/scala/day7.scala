@@ -32,85 +32,50 @@ object Day7 {
 
   // Un-memoized version to get the total of all the children weights, it will 
   // recompute the weights multiple times for the same program
-  def calcChildrenWeights(program:Program):Int ={
-    def _findChildrenWeights(program:Program, accum:Int):Int = {
-      if (program.children.isEmpty) accum
-      else {
-        val weights = for {
-          childName <- program.children.toList
-          child     =  programByName(childName)
-          weight    = _findChildrenWeights(child,child.weight + accum)
-        } yield (weight)
-        weights.sum
-      }
-    }
-    val weight = _findChildrenWeights(program,0)
-    weight
+  def calcWeights(program:Program):Int ={
+    program.weight + program.children.map(programByName).toList.map(calcWeights).sum
   }
 
 
   // Map the program name to the weight of it's children
   lazy val programToTotalWeight = programs.map(program => 
-                                               program.name -> calcChildrenWeights(program)).toMap
-
-  def childrenWeight(program:Program):Set[(Program,Int)] =
-    program.children.map(programByName)
-                    .map( program => 
-                         (program, program.weight + programToTotalWeight(program.name)))
-
+                                               program -> calcWeights(program)).toMap
 
   def unBalancedChild(program:Program):Option[Program] = {
-    val weights = childrenWeight(program)
+    val children = program.children.map(programByName).toList
+    val weights = program.children.map(programByName).toList.map(programToTotalWeight)
     //group by them by their weight
-    val grouped = weights.groupBy(_._2)
-    if (grouped.size == 1){
-      println(grouped)
+    if (weights.toSet.size == 1){
       None
     }
     else {
-      println(grouped.filter({case (weight, children) => children.size == 1}))
+      assert(weights.toSet.size == 2)
+      
+      val outcasts = children.zip(weights).groupBy(_._2).find({ case (k,v) => v.length == 1 })
+      val outcast = outcasts match {
+        case Some((_,List((prog,_)))) => prog
+      }
+
       //get the child that doesn't match the others.
-      val (outcast) = grouped.filter({case (weight, children) => children.size == 1})
-                             .toSeq.head._2.toSeq.head._1
      Some(outcast)
     }
   }
 
-
   def part2(program:Program, parent:Option[Program]):Int = {
-    println(program)
     val unbalanced = unBalancedChild(program)
-    println(unbalanced)
     unbalanced match {
       case Some(prog) => part2(prog,Some(program))
       case None => 
         // Childern are balanced, parent that needs to be rebalanced
       {
-        println(childrenWeight(parent.get).groupBy(_._2))
-        val offBy = childrenWeight(parent.get).groupBy(_._2).map( { case (k,v) => k }).reduce(_ - _)
-        println(offBy)
+        val weights = parent.get.children.map(programByName).toList.map(programToTotalWeight).toSet
+        val offby = weights.reduce(_ - _)
         val outcast = unBalancedChild(parent.get)
-        println(outcast)
-        outcast.get.weight + offBy
+        outcast.get.weight + offby
       }
     }
 
   }
-  
-
-
-
-//  def part2(programs:Programs, root: Program) = {
-//    def loop(program:Program):(Program, List[Int]) = {
-//      val blanaced, weights = isBalanced(programs, program)
-//      if (!balanced) {
-//        val children = program.children.map(programByName))
-//        children.flatMap(loop)
-//      } else  
-//
-//    }
-//  }
-
   def main(args: Array[String]): Unit = {
 
     val root = part1
