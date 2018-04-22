@@ -13,13 +13,13 @@ object Day8 {
   case object NotEqual extends Condition
 
   sealed trait Operation
-  case class Inc(register: Register, amount: Int) extends Operation
-  case class Dec(register: Register, amount: Int) extends Operation
+  case class Inc(amount: Int) extends Operation
+  case class Dec(amount: Int) extends Operation
   
 
   sealed case class Expression(register: Register, condition:Condition, value: Integer)
 
-  case class Instruction(operation: Operation, expression: Expression) 
+  case class Instruction(register: Register, operation: Operation, expression: Expression) 
 
   type Instructions = List[Instruction] 
 
@@ -41,39 +41,66 @@ object Day8 {
 
     val parsed = lines.map({
       case regex(name, "inc", value, conditionRegName, operation, condtionalValue) =>
-        Instruction(Inc(name, value.toInt), 
+        Instruction(name, Inc(value.toInt), 
                    Expression(conditionRegName, readOperation(operation).get, condtionalValue.toInt))
       case regex(name, "dec", value, conditionRegName, operation, condtionalValue) =>
-        Instruction(Dec(name, value.toInt), 
+        Instruction(name,Dec(value.toInt), 
                    Expression(conditionRegName, readOperation(operation).get, condtionalValue.toInt))
     });
 
     parsed
   }
+  
+  def evaluateExpression(expression: Expression, registers: Registers): Boolean = {
 
-  // Todo - Define run function that processes all the instructions in the list.
-  // the registers map will keep the current state
+    val registerValue = registers.getOrElse(expression.register,0)
+    val expressionResult = expression.condition match  {
+      case NotEqual => registerValue != expression.value 
+      case Equal   => registerValue == expression.value
+      case GreaterThan => registerValue > expression.value 
+      case LessThan   => registerValue < expression.value 
+      case GreaterOrEqual => registerValue >= expression.value 
+      case LessOrEqual => registerValue <= expression.value 
+    }
+    expressionResult 
+  }
+
+  def doInstruction(instruction: Instruction, registers: Registers): Registers = 
+  {
+    val newRegisterValue : Int = instruction.operation match {
+      case Inc(amount) => registers.getOrElse(instruction.register,0) + 
+      (if (evaluateExpression(instruction.expression,registers) )
+         amount 
+       else 
+         0)
+
+      case Dec(amount) =>  registers.getOrElse(instruction.register,0) - 
+      (if (evaluateExpression(instruction.expression,registers) )
+         amount 
+       else 
+         0)
+    }
+    
+    val ms = registers - instruction.register
+    ms + (instruction.register -> newRegisterValue) 
+  }
+
   def Run(instructions: Instructions) : Registers =
-  ???
-//  {
-//    
-//    var registers = instructions.fold(Map[Register,Int]()) {
-//      (registers, instruction) => 
-//      {
-//        registers
-//      }
-//
-//    }
-//    registers
-//  }
-
-  def main(args: Array[String]): Unit = {
-
-    var instructions = parse(io.Source.fromFile("./src/main/scala/8.input").getLines.toList)
-
+  {
+    instructions.foldLeft(Map[Register,Int]()) {
+      case (registers, instruction) => doInstruction(instruction, registers)
+    }
+  }
     
 
-    println("Part One: " + instructions)
+  def part1(registers:Registers) = registers.values.max
+    
+  def main(args: Array[String]): Unit = {
+
+    val instructions = parse(io.Source.fromFile("./src/main/scala/8.input").getLines.toList)
+    val registers = Run(instructions)
+
+    println("Part One: " + part1(registers))
   }
   
 }
