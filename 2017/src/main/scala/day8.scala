@@ -92,15 +92,24 @@ object Day8 {
     }
   }
     
+  def Run2(instructions: Instructions) : List[Registers] =
+  {
+    instructions.foldLeft(List[Map[Register,Int]](Map[Register,Int]())) {
+      case (lstRegisters, instruction) => {
+        (doInstruction(instruction, lstRegisters.last)::lstRegisters).reverse
+      }
+    }
+  }
 
-  def part1(registers:Registers) = registers.values.max
+  def part1(instructions: Instructions) = Run(instructions).values.max
+  def part2(instructions: Instructions) = Run2(instructions).map(reg => if (reg.values.isEmpty) Int.MinValue else reg.values.max).max
     
   def main(args: Array[String]): Unit = {
 
     val instructions = parse(io.Source.fromFile("./src/main/scala/8.input").getLines.toList)
-    val registers = Run(instructions)
 
-    println("Part One: " + part1(registers))
+    println("Part One: %d".format(part1(instructions)))
+    println("Part Two: %d".format(part2(instructions)))
   }
   
 }
