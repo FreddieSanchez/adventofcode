@@ -2,29 +2,54 @@ package adventofcode2017.test
 
 import org.scalatest.FunSuite
 import adventofcode2017._
-import adventofcode2017.Day8._
+import adventofcode2017.Day9._
 
-class Day8 extends FunSuite {
+class Day9 extends FunSuite {
 
 
-  val lines = """b inc 5 if a > 1
-                |a inc 1 if b < 5
-                |c dec -10 if a >= 1
-                |c inc -20 if c == 10""".stripMargin.split("\n").toList
-
-  test("test part1") {
+  test("test part1 {}") {
     
-    val parsed = parse(lines)
-    val max = Run(parsed).values.max
-
-    assert(max == 1)
+    val total = parse("{}".toList)
+    assert(total == 1)
   }
-  test("test part2") {
+  test("test part1 {{}}") {
     
-    val parsed = parse(lines)
-    val max = Run2(parsed).map(reg => if (reg.values.isEmpty) 0 else reg.values.max).max
-
-    assert(max == 10)
+    val total = parse("{{}}".toList)
+    assert(total == 3)
   }
+  test("test part1 {{{}}}") {
+    
+    val total = parse("{{{}}}".toList)
+    assert(total == 6)
+  }
+  test("test part1 {{},{}}") {
+    
+    val total = parse("{{},{}}".toList)
+    assert(total == 5)
+  }
+
+  test("test part1 {{{},{},{{}}}}") {
+    
+    val total = parse("{{{},{},{{}}}}".toList)
+    assert(total == 16)
+  }
+
+  test("test part1 {<a>,<a>,<a>,<a>}") {
+    val total = parse("{<a>,<a>,<a>,<a>}".toList)
+    assert(total == 1)
+  }
+  test("test part1 {{<ab>},{<ab>},{<ab>},{<ab>}}") {
+    val total = parse("{{<ab>},{<ab>},{<ab>},{<ab>}}".toList)
+    assert(total == 9)
+  }
+  test("test part1 {{<!!>},{<!!>},{<!!>},{<!!>}},") {
+    val total = parse("{{<!!>},{<!!>},{<!!>},{<!!>}},".toList)
+    assert(total == 9)
+  }
+  test("test part1 {{<a!>},{<a!>},{<a!>},{<ab>}},") {
+    val total = parse("{{<a!>},{<a!>},{<a!>},{<ab>}},".toList)
+    assert(total == 3)
+  }
+
 }
 
