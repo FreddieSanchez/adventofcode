@@ -3,6 +3,7 @@ package adventofcode2017
 object Day9 {
  
   def part1(stream: List[Char]):Int = {
+    @scala.annotation.tailrec
     def _parse(str: List[Char], currentScore: Int, totalScore:Int, inGarbage: Boolean ): Int = {
       //println("Str: %s, currentscore: %d, totalScore: %d, inGarbage: %b".format(str,currentScore,totalScore,inGarbage))
       str match  {
@@ -24,6 +25,7 @@ object Day9 {
 
   
   def part2(stream: List[Char]):List[Char] = {
+    @scala.annotation.tailrec
     def _parse(str: List[Char], garbageChar:List[Char], inGarbage: Boolean ): List[Char] = {
       //println("Str: %s, garbage: %s,  inGarbage: %b".format(str,garbageChar,inGarbage))
       str match  {
@@ -47,7 +49,6 @@ object Day9 {
     val instructions = part1(input)
     val nonGarbageChar = part2(input).length
     println("Part One: %d".format(instructions))
-    println(nonGarbageChar)
     println("Part Two: %d".format(nonGarbageChar))
   }
 
