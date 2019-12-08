@@ -1,7 +1,7 @@
 name := "adventofcode2019"
 organization := ""
 version := "0.1-SNAPSHOT"
-scalaVersion := "2.12.8"
+scalaVersion := "2.12.9"
 
 lazy val EnumeratumVersion = "1.5.13"
 libraryDependencies := Seq(
